@@ -16,4 +16,15 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <!--
+    Before the split these types lived in the same assembly as the WPF app, so its calls into
+    internal members (e.g. CascLib.IsDllPresent) compiled fine. Extracting Core makes that an
+    assembly boundary, which would break the Windows build. Granting friend access keeps the
+    front-ends unchanged rather than widening the native interop surface to public.
+  -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="D2RExtractor" />
+    <InternalsVisibleTo Include="D2RExtractor.Cli" />
+  </ItemGroup>
+
 </Project>
