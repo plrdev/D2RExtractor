@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <Version>1.1.7</Version>
+    <AssemblyName>D2RExtractor.Cli</AssemblyName>
+    <RootNamespace>D2RExtractor.Cli</RootNamespace>
+    <!-- The command users actually type. -->
+    <AssemblyTitle>d2rextractor</AssemblyTitle>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\D2RExtractor.Core\D2RExtractor.Core.csproj" />
+  </ItemGroup>
+
+</Project>

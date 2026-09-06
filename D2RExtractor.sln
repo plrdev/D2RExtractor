@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CascDiagnostic", "CascDiagn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2RExtractor.Core", "D2RExtractor.Core\D2RExtractor.Core.csproj", "{13E7B0B2-F337-40E4-ADCD-DEF409065462}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2RExtractor.Cli", "D2RExtractor.Cli\D2RExtractor.Cli.csproj", "{E3B9D76C-8718-452C-A336-6721E2A3BE1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -30,5 +32,9 @@ Global
 		{13E7B0B2-F337-40E4-ADCD-DEF409065462}.Debug|x64.Build.0 = Debug|x64
 		{13E7B0B2-F337-40E4-ADCD-DEF409065462}.Release|x64.ActiveCfg = Release|x64
 		{13E7B0B2-F337-40E4-ADCD-DEF409065462}.Release|x64.Build.0 = Release|x64
+		{E3B9D76C-8718-452C-A336-6721E2A3BE1E}.Debug|x64.ActiveCfg = Debug|x64
+		{E3B9D76C-8718-452C-A336-6721E2A3BE1E}.Debug|x64.Build.0 = Debug|x64
+		{E3B9D76C-8718-452C-A336-6721E2A3BE1E}.Release|x64.ActiveCfg = Release|x64
+		{E3B9D76C-8718-452C-A336-6721E2A3BE1E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 EndGlobal

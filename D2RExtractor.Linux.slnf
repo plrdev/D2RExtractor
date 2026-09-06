@@ -3,6 +3,7 @@
     "path": "D2RExtractor.sln",
     "projects": [
       "D2RExtractor.Core\\D2RExtractor.Core.csproj",
+      "D2RExtractor.Cli\\D2RExtractor.Cli.csproj",
       "CascDiagnostic\\CascDiagnostic.csproj"
     ]
   }
