@@ -33,15 +33,51 @@ Steam D2R is fully supported. As of the mid-2026 update (build 93236+), Steam sw
 
 The bundled CascLib.dll is still used for Battle.net installs.
 
+### Linux
+
+There is no GUI on Linux — use the `d2rextractor` CLI (see [CLI](#cli) below). Both storage
+formats work:
+
+- **Steam** needs nothing extra; the static-container reader is pure managed code.
+- **Battle.net** needs the native CascLib as `libcasc.so` on the library path. Some distributions
+  package it as `libcasc1` / `libcasc-dev`; otherwise build it:
+
+  ```
+  git clone https://github.com/ladislav-zezula/CascLib.git
+  cmake -S CascLib -B CascLib/build -DCMAKE_BUILD_TYPE=Release \
+        -DCASC_BUILD_SHARED_LIB=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+  cmake --build CascLib/build -j"$(nproc)"
+  sudo cmake --install CascLib/build && sudo ldconfig
+  ```
+
+  `-DCMAKE_POLICY_VERSION_MINIMUM=3.5` is required with CMake 4.x, which dropped compatibility
+  with the `cmake_minimum_required(VERSION 3.2)` CascLib declares. If `cmake --install` puts the
+  library somewhere not on the default linker path (`/usr/local/lib64` on Fedora, for instance),
+  add that directory under `/etc/ld.so.conf.d/` and re-run `ldconfig`.
+
+A game installed through Proton/Wine works fine — point the CLI at the folder inside the prefix,
+e.g. `~/Games/battlenet/drive_c/Program Files (x86)/Diablo II Resurrected`. Launch options
+(`-direct -txt`) go in whatever launcher runs the game.
+
 ---
 
 ## Build
+
+**Windows** (GUI + CLI):
 
 ```
 dotnet build D2RExtractor.sln -c Release -p:Platform=x64
 ```
 
 Output: `D2RExtractor\bin\x64\Release\net8.0-windows\D2RExtractor.exe`
+
+**Linux** (CLI only — the GUI targets `net8.0-windows` and cannot build here):
+
+```
+dotnet build D2RExtractor.Linux.slnf -c Release
+```
+
+Output: `D2RExtractor.Cli/bin/x64/Release/net8.0/D2RExtractor.Cli`
 
 ---
 
@@ -70,6 +106,31 @@ If an extraction is interrupted, the button reads **Resume** and writes only wha
 Each file's content key is read from the game storage during the scan the app already performs, so tracking costs nothing extra. An update rewrites a file when its key differs from the recorded one, or when the file on disk is missing or the wrong size.
 
 Settings has an optional **"Verify extracted file contents during Update"** that checksums every extracted file instead of comparing sizes. It catches files corrupted or edited outside the app, reads the whole extraction (several extra minutes), and still writes only the files that differ.
+
+---
+
+## CLI
+
+`d2rextractor` is a cross-platform command-line front-end. On Linux it is the only interface; on
+Windows it is useful for scripting an update after a patch. It shares `settings.json` with the GUI,
+so installations added in one appear in the other.
+
+```
+d2rextractor add <folder>        Register a D2R installation
+d2rextractor list                Show installations and their state
+d2rextractor forget [target]     Unregister (leaves extracted files on disk)
+d2rextractor status [target]     Show state and what would happen next
+d2rextractor extract [target]    Extract game files
+d2rextractor update [target]     Re-sync after a patch, writing only what changed
+d2rextractor undo [target]       Delete extracted files
+```
+
+A target is an index from `list` or a folder path, and may be omitted when only one installation
+is configured. Options: `--international <lang>`, `--no-international`, `--verify`, `-y`/`--yes`.
+
+Preference overrides given on the command line apply to that run only and are not written back to
+`settings.json`. Unattended runs need `--yes`; the prompts refuse rather than assume when stdin is
+not a terminal.
 
 ---
 
