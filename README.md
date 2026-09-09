@@ -128,6 +128,15 @@ d2rextractor undo [target]       Delete extracted files
 A target is an index from `list` or a folder path, and may be omitted when only one installation
 is configured. Options: `--international <lang>`, `--no-international`, `--verify`, `-y`/`--yes`.
 
+A typical Linux session — the folder name contains spaces, so it has to be quoted, and a leading
+`~` is expanded by the tool since the shell will not expand it inside quotes:
+
+```
+d2rextractor add "~/.local/share/Steam/steamapps/common/Diablo II Resurrected"
+d2rextractor extract
+d2rextractor update --verify        # after a game patch
+```
+
 Preference overrides given on the command line apply to that run only and are not written back to
 `settings.json`. Unattended runs need `--yes`; the prompts refuse rather than assume when stdin is
 not a terminal.

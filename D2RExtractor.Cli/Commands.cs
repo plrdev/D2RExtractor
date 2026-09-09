@@ -16,9 +16,14 @@ internal static class Commands
         if (cli.Target == null)
             return Fail("add needs a path: d2rextractor add <folder>");
 
-        string path = Path.GetFullPath(cli.Target);
+        string path = ResolveInputPath(cli.Target);
         if (!Directory.Exists(path))
-            return Fail($"No such folder: {path}");
+        {
+            string hint = path != cli.Target
+                ? $"\n  (interpreted '{cli.Target}' as '{path}')"
+                : string.Empty;
+            return Fail($"No such folder: {path}{hint}");
+        }
 
         string? problem = CascExtractorService.ValidateInstallationFolder(path);
         if (problem != null)
@@ -286,6 +291,40 @@ internal static class Commands
         : install.IsPartiallyExtracted ? "incomplete — run update"
         : "not extracted";
 
+    /// <summary>
+    /// Resolves a path argument as typed, expanding a leading <c>~</c> to the home directory.
+    ///
+    /// <para>
+    /// The shell normally does that expansion, but not inside quotes - and quoting is
+    /// unavoidable here, because the folder is always called "Diablo II Resurrected". Since a
+    /// Steam library usually lives under $HOME, the natural command
+    /// <c>add "~/.local/share/Steam/steamapps/common/Diablo II Resurrected"</c> would otherwise
+    /// arrive as a relative path and get resolved against the current directory.
+    /// </para>
+    /// </summary>
+    private static string ResolveInputPath(string input)
+    {
+        string path = input;
+
+        if (path == "~")
+        {
+            path = HomeDirectory();
+        }
+        else if (path.StartsWith("~/", StringComparison.Ordinal) ||
+                 path.StartsWith(@"~\", StringComparison.Ordinal))
+        {
+            path = Path.Combine(HomeDirectory(), path[2..]);
+        }
+
+        return Path.GetFullPath(path);
+    }
+
+    private static string HomeDirectory()
+    {
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        return string.IsNullOrEmpty(home) ? Environment.CurrentDirectory : home;
+    }
+
     private static bool PathsEqual(string a, string b) =>
         string.Equals(Path.TrimEndingDirectorySeparator(Path.GetFullPath(a)),
                       Path.TrimEndingDirectorySeparator(Path.GetFullPath(b)),
@@ -325,7 +364,7 @@ internal static class Commands
             return true;
         }
 
-        string path = Path.GetFullPath(target);
+        string path = ResolveInputPath(target);
         var match = installs.FirstOrDefault(i => PathsEqual(i.FolderPath, path));
         if (match == null)
         {
